@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- 一般標題 -->
     <title>馬的！數獨</title>
+
+    <!-- 🔗 LINE / FB / 社群分享連結預覽標籤 (Open Graph) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jenny154.github.io/sudoku-game/">
+    <meta property="og:title" content="🤬 馬的！數獨">
+    <meta property="og:description" content="清華高材生專用數獨！敢來挑戰嗎？每過一分鐘還會偷走你的答案喔 ^_^">
+    <meta property="og:image" content="https://api.iconify.design/twemoji:clown-face.svg"> <!-- 預覽圖：醜小丑 -->
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -70,7 +80,7 @@
         </div>
     </div>
 
-    <!-- 破關驚喜彈窗 (會動的箱子與比中指小丑) -->
+    <!-- 破關驚喜彈窗 -->
     <div id="win-modal" class="modal hidden">
         <div class="modal-content">
             <div id="box-container" onclick="openBox()">
