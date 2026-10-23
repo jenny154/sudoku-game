@@ -10,6 +10,17 @@
     <div class="container">
         <h1>🤬 馬的！數獨</h1>
 
+        <!-- 計時器與惡意計量條 -->
+        <div class="header-info">
+            <div id="timer" class="timer">⏳ 耗時：00:00</div>
+            <div class="steal-container">
+                <span class="steal-icon">👎</span>
+                <div class="steal-bar-bg">
+                    <div id="steal-bar" class="steal-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- 選擇難度與關卡 -->
         <div class="controls">
             <div class="control-group">
@@ -31,7 +42,7 @@
         <!-- 狀態與功能按鈕 -->
         <div class="action-bar">
             <button class="btn btn-reset" onclick="startLevel()">重來</button>
-            <button class="btn btn-check" onclick="checkAnswer()">檢查答案</button>
+            <button class="btn btn-check" onclick="checkAnswer()">公布答案</button>
         </div>
 
         <!-- 數獨棋盤 -->
@@ -56,6 +67,33 @@
             <button onclick="inputNumber(8)">8</button>
             <button onclick="inputNumber(9)">9</button>
             <button onclick="inputNumber(0)" class="btn-clear">清除</button>
+        </div>
+    </div>
+
+    <!-- 破關驚喜彈窗 (會動的箱子與比中指小丑) -->
+    <div id="win-modal" class="modal hidden">
+        <div class="modal-content">
+            <div id="box-container" onclick="openBox()">
+                <div class="gift-box">🎁</div>
+                <div class="box-hint">點擊箱子領取獎勵</div>
+            </div>
+            <div id="win-reward" class="hidden">
+                <div class="clown-container">
+                    <div class="clown-emoji">🤡🖕</div>
+                </div>
+                <h2>WTF 你真的過關了？</h2>
+                <p id="win-message">不愧是清華的餒！智商超越全國 5% 智障 ^_^</p>
+                <button class="btn btn-check" onclick="closeWinModal()">繼續嘲諷</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 偷答案黑幕彈窗 -->
+    <div id="steal-modal" class="modal hidden">
+        <div class="steal-card">
+            <h2>⏱️ 時間到！</h2>
+            <p>你想得太久了，我要偷走一個你填完的答案！</p>
+            <button class="btn btn-check" onclick="dismissStealModal()">可惡...還給我！</button>
         </div>
     </div>
 
