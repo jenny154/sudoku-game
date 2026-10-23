@@ -1,16 +1,9 @@
 // 30 關預設題目（簡單、中等、困難各 10 關）
-// 0 代表空格
 const LEVELS = {
     easy: [
-        {
-            puzzle: "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
-            solution: "534678912672195348198342567859761423426853791713924856961537284287419635345286179"
-        },
-        // 可依此類推新增 10 關（此處先用預設測資填充 10 關）
-        ...Array(9).fill({
-            puzzle: "000260701680070090190004500820100040004602900050003028009300074040050036703018000",
-            solution: "435269781682571493197834562826195347374682915951743628519326874248957136763418259"
-        })
+        { puzzle: "530070000600195000098000060800060003400803001700020006060000280000419005000080079", solution: "534678912672195348198342567859761423426853791713924856961537284287419635345286179" },
+        { puzzle: "000260701680070090190004500820100040004602900050003028009300074040050036703018000", solution: "435269781682571493197834562826195347374682915951743628519326874248957136763418259" },
+        ...Array(8).fill({ puzzle: "530070000600195000098000060800060003400803001700020006060000280000419005000080079", solution: "534678912672195348198342567859761423426853791713924856961537284287419635345286179" })
     ],
     medium: Array(10).fill({
         puzzle: "000000012000000003002300400001800005060070080000009000008500000900040500470006000",
@@ -22,16 +15,24 @@ const LEVELS = {
     })
 };
 
-let currentBoard = [];
+// 毒舌語錄庫
+const TAUNTS = [
+    "你這廢物有沒有一點志氣嗎",
+    "超爛的啦",
+    "你清華的餒？",
+    "這也需要提示==?"
+];
+
+let currentBoard = [];     // 正式答案
+let currentNotes = [];     // 候選筆記 (每個元素是 Set)
 let currentSolution = [];
 let selectedCellIndex = null;
+let isNoteMode = false;     // false: 填答案, true: 填筆記
 
-// 初始化頁面
 window.onload = () => {
     loadLevelList();
 };
 
-// 載入關卡下拉清單
 function loadLevelList() {
     const levelSelect = document.getElementById('level');
     levelSelect.innerHTML = '';
@@ -45,39 +46,55 @@ function loadLevelList() {
     startLevel();
 }
 
-// 開始關卡
 function startLevel() {
     const diff = document.getElementById('difficulty').value;
     const levelIdx = parseInt(document.getElementById('level').value);
     
     const data = LEVELS[diff][levelIdx];
     currentBoard = data.puzzle.split('').map(Number);
+    currentNotes = Array.from({ length: 81 }, () => new Set());
     currentSolution = data.solution.split('').map(Number);
     selectedCellIndex = null;
 
     renderBoard();
 }
 
-// 繪製棋盤
 function renderBoard() {
     const boardEl = document.getElementById('sudoku-board');
     boardEl.innerHTML = '';
+
+    const diff = document.getElementById('difficulty').value;
+    const levelIdx = parseInt(document.getElementById('level').value);
+    const puzzleStr = LEVELS[diff][levelIdx].puzzle;
 
     currentBoard.forEach((val, idx) => {
         const cell = document.createElement('div');
         cell.classList.add('cell');
         
-        // 判斷是否為初始給定數字
-        const diff = document.getElementById('difficulty').value;
-        const levelIdx = parseInt(document.getElementById('level').value);
-        const originalVal = LEVELS[diff][levelIdx].puzzle[idx];
+        const isGiven = puzzleStr[idx] !== '0';
 
-        if (originalVal !== '0') {
+        if (isGiven) {
             cell.classList.add('given');
+            cell.textContent = val;
+        } else if (val !== 0) {
+            // 已填入正式答案
+            cell.textContent = val;
+        } else {
+            // 顯示候選筆記
+            const notesSet = currentNotes[idx];
+            if (notesSet.size > 0) {
+                const notesGrid = document.createElement('div');
+                notesGrid.classList.add('notes-grid');
+                for (let i = 1; i <= 9; i++) {
+                    const noteItem = document.createElement('div');
+                    noteItem.classList.add('note-num');
+                    noteItem.textContent = notesSet.has(i) ? i : '';
+                    notesGrid.appendChild(noteItem);
+                }
+                cell.appendChild(notesGrid);
+            }
         }
 
-        cell.textContent = val !== 0 ? val : '';
-        
         if (selectedCellIndex === idx) {
             cell.classList.add('selected');
         }
@@ -87,29 +104,58 @@ function renderBoard() {
     });
 }
 
-// 選擇單元格
 function selectCell(index) {
     selectedCellIndex = index;
     renderBoard();
 }
 
-// 輸入數字
+function toggleMode() {
+    isNoteMode = !isNoteMode;
+    const btn = document.getElementById('mode-btn');
+    if (isNoteMode) {
+        btn.textContent = "✏️ 當前模式：候選筆記";
+        btn.className = "btn-mode mode-note";
+    } else {
+        btn.textContent = "✍️ 當前模式：正式答案";
+        btn.className = "btn-mode mode-answer";
+    }
+}
+
 function inputNumber(num) {
     if (selectedCellIndex === null) return;
 
     const diff = document.getElementById('difficulty').value;
     const levelIdx = parseInt(document.getElementById('level').value);
-    const originalVal = LEVELS[diff][levelIdx].puzzle[selectedCellIndex];
+    const isGiven = LEVELS[diff][levelIdx].puzzle[selectedCellIndex] !== '0';
 
-    // 不能修改題目預設數字
-    if (originalVal !== '0') return;
+    if (isGiven) return; // 題目預設格不可改
 
-    currentBoard[selectedCellIndex] = num;
+    if (num === 0) {
+        // 清除
+        currentBoard[selectedCellIndex] = 0;
+        currentNotes[selectedCellIndex].clear();
+    } else if (isNoteMode) {
+        // 筆記模式
+        currentBoard[selectedCellIndex] = 0; // 清除正式答案
+        const notesSet = currentNotes[selectedCellIndex];
+        if (notesSet.has(num)) {
+            notesSet.delete(num);
+        } else {
+            notesSet.add(num);
+        }
+    } else {
+        // 正式答案模式
+        currentBoard[selectedCellIndex] = num;
+        currentNotes[selectedCellIndex].clear(); // 清空筆記
+    }
+
     renderBoard();
 }
 
-// 檢查答案
 function checkAnswer() {
+    // 隨機選取一句毒舌金句
+    const randomTaunt = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
+    
     let isCorrect = true;
     let isFilled = true;
 
@@ -125,10 +171,10 @@ function checkAnswer() {
     });
 
     if (!isFilled) {
-        alert("還沒填完喔！請繼續努力。");
+        alert(`${randomTaunt}\n\n（還沒填完啦！）`);
     } else if (isCorrect) {
-        alert("🎉 恭喜你！成功通關！");
+        alert("🎉 算你厲害，竟然真的猜對了！");
     } else {
-        alert("❌ 答案有誤（紅色標示處），再檢查看看吧！");
+        alert(`${randomTaunt}\n\n（答案有錯，紅色標示處再檢查一下啦！）`);
     }
 }

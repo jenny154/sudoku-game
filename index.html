@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>數獨大挑戰</title>
+    <title>馬的！數獨</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🧩 數獨大挑戰</h1>
+        <h1>🤬 馬的！數獨</h1>
 
         <!-- 選擇難度與關卡 -->
         <div class="controls">
@@ -37,7 +37,14 @@
         <!-- 數獨棋盤 -->
         <div id="sudoku-board" class="board"></div>
 
-        <!-- 數字鍵盤 (適合手機操作) -->
+        <!-- 模式切換按鈕 -->
+        <div class="mode-toggle">
+            <button id="mode-btn" class="btn-mode mode-answer" onclick="toggleMode()">
+                ✍️ 當前模式：正式答案
+            </button>
+        </div>
+
+        <!-- 數字鍵盤 -->
         <div class="numpad">
             <button onclick="inputNumber(1)">1</button>
             <button onclick="inputNumber(2)">2</button>
