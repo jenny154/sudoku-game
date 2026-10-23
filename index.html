@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <!-- 一般標題 -->
     <title>馬的！數獨</title>
 
-    <!-- 🔗 LINE / FB / 社群分享連結預覽標籤 (Open Graph) -->
+    <!-- 🔗 社群分享連結預覽標籤 (Open Graph) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://jenny154.github.io/sudoku-game/">
     <meta property="og:title" content="🤬 馬的！數獨">
-    <meta property="og:description" content="清華高材生專用數獨！敢來挑戰嗎？每過一分鐘還會偷走你的答案喔 ^_^">
-    <meta property="og:image" content="https://api.iconify.design/twemoji:clown-face.svg"> <!-- 預覽圖：醜小丑 -->
+    <meta property="og:description" content="清華高材生專用數獨！敢來挑戰嗎？每過一分鐘還會偷走你的答案或丟炸彈喔 ^_^">
+    <meta property="og:image" content="https://api.iconify.design/twemoji:clown-face.svg">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -52,16 +51,27 @@
         <!-- 狀態與功能按鈕 -->
         <div class="action-bar">
             <button class="btn btn-reset" onclick="startLevel()">重來</button>
+            <button class="btn btn-peek" onclick="peekAnswer()">偷看 1 秒</button>
             <button class="btn btn-check" onclick="checkAnswer()">公布答案</button>
         </div>
 
-        <!-- 數獨棋盤 -->
-        <div id="sudoku-board" class="board"></div>
+        <!-- 數獨棋盤（加載炸彈與閃現提示） -->
+        <div class="board-wrapper">
+            <div id="sudoku-board" class="board"></div>
+            <div id="peek-banner" class="peek-banner hidden">👀 偷看 1 秒中...記住了沒！</div>
+            <div id="bomb-overlay" class="bomb-overlay hidden">
+                <div class="bomb">💣</div>
+                <div class="explosion">💥</div>
+            </div>
+        </div>
 
-        <!-- 模式切換按鈕 -->
-        <div class="mode-toggle">
-            <button id="mode-btn" class="btn-mode mode-answer" onclick="toggleMode()">
-                ✍️ 當前模式：正式答案
+        <!-- 分離式的雙模式按鈕 -->
+        <div class="mode-buttons">
+            <button id="btn-mode-answer" class="btn-mode-tab active" onclick="setMode('answer')">
+                ✍️ 正式答案
+            </button>
+            <button id="btn-mode-note" class="btn-mode-tab" onclick="setMode('note')">
+                ✏️ 候選筆記
             </button>
         </div>
 
@@ -69,44 +79,4 @@
         <div class="numpad">
             <button onclick="inputNumber(1)">1</button>
             <button onclick="inputNumber(2)">2</button>
-            <button onclick="inputNumber(3)">3</button>
-            <button onclick="inputNumber(4)">4</button>
-            <button onclick="inputNumber(5)">5</button>
-            <button onclick="inputNumber(6)">6</button>
-            <button onclick="inputNumber(7)">7</button>
-            <button onclick="inputNumber(8)">8</button>
-            <button onclick="inputNumber(9)">9</button>
-            <button onclick="inputNumber(0)" class="btn-clear">清除</button>
-        </div>
-    </div>
-
-    <!-- 破關驚喜彈窗 -->
-    <div id="win-modal" class="modal hidden">
-        <div class="modal-content">
-            <div id="box-container" onclick="openBox()">
-                <div class="gift-box">🎁</div>
-                <div class="box-hint">點擊箱子領取獎勵</div>
-            </div>
-            <div id="win-reward" class="hidden">
-                <div class="clown-container">
-                    <div class="clown-emoji">🤡🖕</div>
-                </div>
-                <h2>WTF 你真的過關了？</h2>
-                <p id="win-message">不愧是清華的餒！智商超越全國 5% 智障 ^_^</p>
-                <button class="btn btn-check" onclick="closeWinModal()">繼續嘲諷</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 偷答案黑幕彈窗 -->
-    <div id="steal-modal" class="modal hidden">
-        <div class="steal-card">
-            <h2>⏱️ 時間到！</h2>
-            <p>你想得太久了，我要偷走一個你填完的答案！</p>
-            <button class="btn btn-check" onclick="dismissStealModal()">可惡...還給我！</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+            <button onclick
