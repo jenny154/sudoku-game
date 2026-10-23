@@ -79,4 +79,45 @@
         <div class="numpad">
             <button onclick="inputNumber(1)">1</button>
             <button onclick="inputNumber(2)">2</button>
-            <button onclick
+            <button onclick="inputNumber(3)">3</button>
+            <button onclick="inputNumber(4)">4</button>
+            <button onclick="inputNumber(5)">5</button>
+            <button onclick="inputNumber(6)">6</button>
+            <button onclick="inputNumber(7)">7</button>
+            <button onclick="inputNumber(8)">8</button>
+            <button onclick="inputNumber(9)">9</button>
+            <button onclick="inputNumber(0)" class="btn-clear">清除</button>
+        </div>
+    </div>
+
+    <!-- 破關驚喜彈窗 -->
+    <div id="win-modal" class="modal hidden">
+        <div class="modal-content">
+            <div id="box-container" onclick="openBox()">
+                <div class="gift-box">🎁</div>
+                <div class="box-hint">點擊箱子領取獎勵</div>
+            </div>
+            <div id="win-reward" class="hidden">
+                <div class="clown-container">
+                    <div class="clown-emoji">🤡🖕</div>
+                </div>
+                <h2>WTF 你真的過關了？</h2>
+                <p id="win-message">不愧是清華的餒！智商超越全國 5% 智障 ^_^</p>
+                <button class="btn btn-check" onclick="closeWinModal()">繼續嘲諷</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 滿版黑色投影幕小偷彈窗 -->
+    <div id="curtain-modal" class="curtain-overlay hidden">
+        <div class="curtain-screen">
+            <div class="thief-icon">🥷</div>
+            <h2>⏱️ 時間拉下投影幕！</h2>
+            <p>你想得太久了，小偷順手牽羊拿走你一個答案！</p>
+            <button class="btn btn-check" onclick="dismissCurtainModal()">可惡的偷竊狂...還給我！</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
