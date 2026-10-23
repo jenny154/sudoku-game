@@ -4,9 +4,16 @@
     touch-action: manipulation;
 }
 
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: #f4f6f9;
-    margin: 0;
     padding: 10px;
     display: flex;
     justify-content: center;
@@ -16,16 +23,18 @@ body {
 
 .container {
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
     background: white;
-    padding: 15px;
+    padding: 12px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 h1 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-top: 0;
     margin-bottom: 8px;
     color: #2c3e50;
@@ -36,10 +45,10 @@ h1 {
     justify-content: space-between;
     align-items: center;
     background: #f1f2f6;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 8px;
-    margin-bottom: 12px;
-    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
     font-weight: bold;
     color: #333;
 }
@@ -48,10 +57,10 @@ h1 {
     display: flex;
     align-items: center;
     gap: 6px;
-    width: 55%;
+    width: 50%;
 }
 
-.steal-icon { font-size: 1.1rem; }
+.steal-icon { font-size: 1rem; }
 
 .steal-bar-bg {
     flex: 1;
@@ -71,59 +80,64 @@ h1 {
 .controls {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    gap: 6px;
 }
 
 .control-group {
     display: flex;
     align-items: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    flex: 1;
 }
 
 select {
-    padding: 6px 10px;
+    width: 100%;
+    padding: 5px 4px;
     border-radius: 8px;
     border: 1px solid #ccc;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     background-color: #fff;
 }
 
 .action-bar {
     display: flex;
     gap: 6px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .btn {
     flex: 1;
-    padding: 8px 4px;
+    padding: 8px 2px;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .btn-reset { background-color: #e0e0e0; color: #333; }
 .btn-peek { background-color: #ff9f43; color: white; }
+.btn-peek:disabled { background-color: #b2bec3; cursor: not-allowed; }
 .btn-check { background-color: #ff4757; color: white; }
 
 /* 獨立雙模式按鈕 */
 .mode-buttons {
     display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 10px;
 }
 
 .btn-mode-tab {
     flex: 1;
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
     border: 2px solid #dcdde1;
     background-color: #f5f6fa;
     color: #7f8c8d;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -132,20 +146,18 @@ select {
     background-color: #2e86de;
     border-color: #2e86de;
     color: white;
-    box-shadow: 0 3px 8px rgba(46, 134, 222, 0.3);
 }
 
 .btn-mode-tab.active#btn-mode-note {
     background-color: #ff9f43;
     border-color: #ff9f43;
     color: white;
-    box-shadow: 0 3px 8px rgba(255, 159, 67, 0.3);
 }
 
 /* 棋盤與疊層 */
 .board-wrapper {
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .board {
@@ -154,7 +166,7 @@ select {
     grid-template-rows: repeat(9, 1fr);
     gap: 1px;
     background-color: #222;
-    border: 3px solid #222;
+    border: 2px solid #222;
     aspect-ratio: 1;
     border-radius: 4px;
     overflow: hidden;
@@ -165,7 +177,7 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     color: #2c3e50;
     cursor: pointer;
@@ -188,7 +200,7 @@ select {
 
 .cell.peek {
     background-color: #ffeaa7 !important;
-    color: #d63031 !weight;
+    color: #d63031 !important;
 }
 
 .cell.selected { background-color: #74b9ff !important; }
@@ -200,14 +212,34 @@ select {
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.85);
     color: #ffeaa7;
-    padding: 10px 18px;
+    padding: 8px 14px;
     border-radius: 20px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.9rem;
     pointer-events: none;
     z-index: 100;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    white-space: nowrap;
 }
+
+/* 關卡已鎖定遮罩 */
+.locked-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.lock-icon { font-size: 3rem; margin-bottom: 5px; }
+.locked-overlay h3 { margin: 5px 0; color: #2d3436; font-size: 1.2rem; }
+.locked-overlay p { margin: 5px 0; color: #ff4757; font-weight: bold; font-size: 1rem; }
+.lock-sub { font-size: 0.8rem; color: #636e72; margin-top: 5px; }
 
 .notes-grid {
     display: grid;
@@ -215,12 +247,11 @@ select {
     grid-template-rows: repeat(3, 1fr);
     width: 100%;
     height: 100%;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: #636e72;
     font-weight: normal;
     text-align: center;
     line-height: 1;
-    padding: 1px;
 }
 
 .note-num {
@@ -233,24 +264,22 @@ select {
 .numpad {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    gap: 6px;
 }
 
 .numpad button {
-    padding: 12px 0;
-    font-size: 1.2rem;
+    padding: 10px 0;
+    font-size: 1.1rem;
     font-weight: bold;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     cursor: pointer;
 }
 
 .numpad button:active { background-color: #e0e0e0; }
 .numpad .btn-clear {
-    grid-column: span 1;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     background-color: #ffebee;
     color: #c62828;
 }
@@ -268,18 +297,18 @@ select {
 }
 
 .bomb {
-    font-size: 4rem;
+    font-size: 3.5rem;
     animation: dropBomb 0.8s cubic-bezier(0.6, 0.04, 0.98, 0.33) forwards;
 }
 
 .explosion {
-    font-size: 6rem;
+    font-size: 5rem;
     display: none;
     animation: explode 0.5s ease-out forwards;
 }
 
 @keyframes dropBomb {
-    0% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+    0% { transform: translateY(-150px) scale(0.5); opacity: 0; }
     80% { transform: translateY(0) scale(1.2); opacity: 1; }
     100% { transform: translateY(0) scale(1); opacity: 1; }
 }
@@ -290,77 +319,59 @@ select {
     100% { transform: scale(2); opacity: 0; }
 }
 
-/* 滿版黑色投影幕 */
-.curtain-overlay {
+/* 修正彈窗 Overflow 問題 */
+.curtain-overlay, .modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
     background: rgba(0,0,0,0.8);
     z-index: 2000;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .curtain-screen {
-    width: 100%;
-    max-width: 420px;
+    width: 90%;
+    max-width: 340px;
     background: #111;
     color: white;
-    padding: 30px 20px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    padding: 25px 15px;
+    border-radius: 16px;
     text-align: center;
-    animation: pullCurtain 0.6s ease-out forwards;
-}
-
-@keyframes pullCurtain {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(0); }
-}
-
-.thief-icon { font-size: 4rem; margin-bottom: 10px; }
-
-/* 破關彈窗 */
-.modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
 .modal-content {
     background: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 16px;
     width: 85%;
-    max-width: 320px;
+    max-width: 300px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 .hidden { display: none !important; }
 
+.thief-icon { font-size: 3rem; margin-bottom: 5px; }
+
 .gift-box {
-    font-size: 4rem;
+    font-size: 3.5rem;
     animation: bounce 0.6s infinite alternate;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
-.box-hint { font-size: 0.9rem; color: #666; }
+.box-hint { font-size: 0.85rem; color: #666; }
 
 @keyframes bounce {
     from { transform: translateY(0) rotate(0deg); }
-    to { transform: translateY(-10px) rotate(5deg); }
+    to { transform: translateY(-8px) rotate(5deg); }
 }
 
 .clown-emoji {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
+    font-size: 3rem;
+    margin-bottom: 5px;
     animation: shake 0.3s infinite alternate;
 }
 

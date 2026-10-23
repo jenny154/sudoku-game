@@ -1,6 +1,4 @@
-// 完整且嚴格區分難易度的 10 關題庫
 const LEVELS = {
-    // 簡單 (Easy)：初始已知數字多 (35~40個)
     easy: [
         { puzzle: "530070000600195000098000060800060003400803001700020006060000280000419005000080079", solution: "534678912672195348198342567859761423426853791713924856961537284287419635345286179" },
         { puzzle: "000260701680070090190004500820100040004602900050003028009300074040050036703018000", solution: "435269781682571493197834562826195347374682915951743628519326874248957136763418259" },
@@ -13,8 +11,6 @@ const LEVELS = {
         { puzzle: "123456789000000000000000000000000000000000000000000000000000000000000000000000000", solution: "123456789456789123789123456231564897564897231897231564312645978645978312978312645" },
         { puzzle: "090000030000305000001020400005000800000102000004000300003010900000807000050000010", solution: "492681537736345182881729465265493871349152684614876359523914978164837256957268513" }
     ],
-
-    // 中等 (Medium)：初始已知數字較少 (28~32個)
     medium: [
         { puzzle: "000000012000000003002300400001800005060070080000009000008500000900040500470006000", solution: "635498712187254963942317458291835674364172089578649231718523694926741583453986127" },
         { puzzle: "000000085000210009960080100500800016000000000890006007009070052300054000480000000", solution: "217394685834215769965782134523847916176529348894136257649173852301954871482601593" },
@@ -27,8 +23,6 @@ const LEVELS = {
         { puzzle: "000000000000000000000000000000000000000000000000000000000000000000000000000000001", solution: "234567891567891234891234567123456789456789123789123456345678912678912345912345678" },
         { puzzle: "000000000000000000000000000000000000000000000000000000000000000000000000000000002", solution: "134567892567892134892134567213456789456789213789213456345678921678921345921345678" }
     ],
-
-    // 困難 (Hard)：極少已知數字 (20~24個)，高燒腦度
     hard: [
         { puzzle: "800000000003600000070090200050007000000045000000100030001000068008500010090000400", solution: "812753649943682175276491283359827416724345861685169732161274968438516217597938421" },
         { puzzle: "000000000000003085001020000000507000004000100090000000500000073002010000000040009", solution: "987654321246193785351827496123547869864932157795861234518279673472316958639745819" },
@@ -60,6 +54,7 @@ let timerSeconds = 0;
 let timerInterval = null;
 let stealSeconds = 0;
 let stealInterval = null;
+let peekCount = 3; // 偷看剩餘次數
 let isPeeking = false;
 
 window.onload = () => {
@@ -67,13 +62,24 @@ window.onload = () => {
 };
 
 function loadLevelList() {
+    const diff = document.getElementById('difficulty').value;
     const levelSelect = document.getElementById('level');
     levelSelect.innerHTML = '';
     
     for (let i = 1; i <= 10; i++) {
         const opt = document.createElement('option');
         opt.value = i - 1;
-        opt.textContent = `第 ${i} 關`;
+        
+        // 讀取破關紀錄
+        const scoreKey = `sudoku_${diff}_${i-1}`;
+        const bestTime = localStorage.getItem(scoreKey);
+
+        if (bestTime) {
+            opt.textContent = `第 ${i} 關 🔒`;
+        } else {
+            opt.textContent = `第 ${i} 關`;
+        }
+
         levelSelect.appendChild(opt);
     }
     startLevel();
@@ -83,6 +89,21 @@ function startLevel() {
     const diff = document.getElementById('difficulty').value;
     const levelIdx = parseInt(document.getElementById('level').value);
     
+    // 檢查是否已破關
+    const scoreKey = `sudoku_${diff}_${levelIdx}`;
+    const bestTime = localStorage.getItem(scoreKey);
+    const lockOverlay = document.getElementById('locked-overlay');
+
+    if (bestTime) {
+        lockOverlay.classList.remove('hidden');
+        document.getElementById('best-score-text').textContent = `最佳成績：${bestTime}`;
+        clearInterval(timerInterval);
+        clearInterval(stealInterval);
+        return;
+    } else {
+        lockOverlay.classList.add('hidden');
+    }
+
     const data = LEVELS[diff][levelIdx];
     currentBoard = data.puzzle.split('').map(Number);
     currentNotes = Array.from({ length: 81 }, () => new Set());
@@ -90,8 +111,18 @@ function startLevel() {
     selectedCellIndex = null;
     isPeeking = false;
 
+    // 重置偷看次數為 3 次
+    peekCount = 3;
+    updatePeekButton();
+
     renderBoard();
     resetTimers();
+}
+
+function updatePeekButton() {
+    const btn = document.getElementById('btn-peek');
+    btn.textContent = `偷看 1 秒 (${peekCount}/3)`;
+    btn.disabled = peekCount <= 0;
 }
 
 function resetTimers() {
@@ -128,21 +159,29 @@ function updateStealBar() {
     document.getElementById('steal-bar').style.width = `${pct}%`;
 }
 
-// 偷看答案 1 秒
+// 偷看答案 1 秒 (最多 3 次)
 function peekAnswer() {
     if (isPeeking) return;
+
+    if (peekCount <= 0) {
+        alert("❌ 3 次偷看機會都用光了！沒招了吧？自己動腦想啦！");
+        return;
+    }
+
+    peekCount--;
+    updatePeekButton();
     isPeeking = true;
 
     const banner = document.getElementById('peek-banner');
     banner.classList.remove('hidden');
 
-    renderBoard(true); // 傳入 peek 模式
+    renderBoard(true);
 
     setTimeout(() => {
         isPeeking = false;
         banner.classList.add('hidden');
         renderBoard(false);
-        alert("⏱️ 1秒到了！記住了沒啊？清華高材生 ^_^");
+        alert(`⏱️ 1秒到了！還剩 ${peekCount} 次機會，記住了沒啊？`);
     }, 1000);
 }
 
@@ -150,6 +189,10 @@ function triggerMaliciousEvent() {
     if (isPeeking) return;
     const diff = document.getElementById('difficulty').value;
     const levelIdx = parseInt(document.getElementById('level').value);
+    
+    // 如果已經破關就不觸發
+    if (localStorage.getItem(`sudoku_${diff}_${levelIdx}`)) return;
+
     const puzzleStr = LEVELS[diff][levelIdx].puzzle;
 
     let filledIndices = [];
@@ -211,7 +254,6 @@ function renderBoard(showPeek = false) {
         const isGiven = puzzleStr[idx] !== '0';
 
         if (showPeek) {
-            // 偷看模式：全盤顯示正確解答
             cell.textContent = currentSolution[idx];
             cell.classList.add('peek');
         } else {
@@ -318,11 +360,21 @@ function checkAnswer() {
         
         const min = Math.floor(timerSeconds / 60);
         const sec = timerSeconds % 60;
+        const timeStr = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+
+        // 保存成績與鎖定關卡
+        const diff = document.getElementById('difficulty').value;
+        const levelIdx = parseInt(document.getElementById('level').value);
+        localStorage.setItem(`sudoku_${diff}_${levelIdx}`, `${min}分${sec}秒`);
+
         document.getElementById('win-message').textContent = `不愧是清華的餒！竟然花了 ${min}分${sec}秒 才解開，智商超越全國 5% 智障 ^_^`;
         
         document.getElementById('box-container').classList.remove('hidden');
         document.getElementById('win-reward').classList.add('hidden');
         document.getElementById('win-modal').classList.remove('hidden');
+
+        // 更新選單標籤
+        loadLevelList();
     } else {
         alert(`${randomTaunt}\n\n（答案有錯，紅色標示處再檢查一下啦！）`);
     }
@@ -335,4 +387,5 @@ function openBox() {
 
 function closeWinModal() {
     document.getElementById('win-modal').classList.add('hidden');
+    startLevel(); // 關閉後會自動顯示「🔒 已通關」遮罩
 }

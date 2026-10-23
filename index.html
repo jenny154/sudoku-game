@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>馬的！數獨</title>
 
@@ -51,13 +51,22 @@
         <!-- 狀態與功能按鈕 -->
         <div class="action-bar">
             <button class="btn btn-reset" onclick="startLevel()">重來</button>
-            <button class="btn btn-peek" onclick="peekAnswer()">偷看 1 秒</button>
+            <button id="btn-peek" class="btn btn-peek" onclick="peekAnswer()">偷看 1 秒 (3/3)</button>
             <button class="btn btn-check" onclick="checkAnswer()">公布答案</button>
         </div>
 
         <!-- 數獨棋盤（加載炸彈與閃現提示） -->
         <div class="board-wrapper">
             <div id="sudoku-board" class="board"></div>
+            
+            <!-- 已通關遮罩 -->
+            <div id="locked-overlay" class="locked-overlay hidden">
+                <div class="lock-icon">🔒</div>
+                <h3>此關卡已通關！</h3>
+                <p id="best-score-text">紀錄耗時：00:00</p>
+                <span class="lock-sub">請選擇其他關卡繼續挑戰</span>
+            </div>
+
             <div id="peek-banner" class="peek-banner hidden">👀 偷看 1 秒中...記住了沒！</div>
             <div id="bomb-overlay" class="bomb-overlay hidden">
                 <div class="bomb">💣</div>
