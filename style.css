@@ -1,0 +1,136 @@
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    touch-action: manipulation;
+}
+
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+
+.action-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-reset { background-color: #e0e0e0; color: #333; }
+.btn-check { background-color: #4CAF50; color: white; }
+
+/* 數獨網格 */
+.board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    gap: 1px;
+    background-color: #333;
+    border: 2px solid #333;
+    aspect-ratio: 1;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cell {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* 3x3 九宮格粗線分隔 */
+.cell:nth-child(3n) { border-right: 2px solid #333; }
+.cell:nth-child(9n) { border-right: none; }
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #333;
+}
+
+/* 單元格狀態 */
+.cell.given { background-color: #f0f3f6; color: #000; }
+.cell.selected { background-color: #bbdefb !important; }
+.cell.wrong { color: #d32f2f; background-color: #ffcdd2; }
+
+/* 數字鍵盤 */
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.numpad button {
+    padding: 12px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+
+.numpad button:active { background-color: #e0e0e0; }
+.numpad .btn-clear {
+    grid-column: span 1;
+    font-size: 0.85rem;
+    background-color: #ffebee;
+    color: #c62828;
+}

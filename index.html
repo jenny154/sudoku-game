@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>數獨大挑戰</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 數獨大挑戰</h1>
+
+        <!-- 選擇難度與關卡 -->
+        <div class="controls">
+            <div class="control-group">
+                <label for="difficulty">難度：</label>
+                <select id="difficulty" onchange="loadLevelList()">
+                    <option value="easy">簡單 (Easy)</option>
+                    <option value="medium">中等 (Medium)</option>
+                    <option value="hard">困難 (Hard)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="level">關卡：</label>
+                <select id="level" onchange="startLevel()">
+                    <!-- 動態生成 1~10 關 -->
+                </select>
+            </div>
+        </div>
+
+        <!-- 狀態與功能按鈕 -->
+        <div class="action-bar">
+            <button class="btn btn-reset" onclick="startLevel()">重來</button>
+            <button class="btn btn-check" onclick="checkAnswer()">檢查答案</button>
+        </div>
+
+        <!-- 數獨棋盤 -->
+        <div id="sudoku-board" class="board"></div>
+
+        <!-- 數字鍵盤 (適合手機操作) -->
+        <div class="numpad">
+            <button onclick="inputNumber(1)">1</button>
+            <button onclick="inputNumber(2)">2</button>
+            <button onclick="inputNumber(3)">3</button>
+            <button onclick="inputNumber(4)">4</button>
+            <button onclick="inputNumber(5)">5</button>
+            <button onclick="inputNumber(6)">6</button>
+            <button onclick="inputNumber(7)">7</button>
+            <button onclick="inputNumber(8)">8</button>
+            <button onclick="inputNumber(9)">9</button>
+            <button onclick="inputNumber(0)" class="btn-clear">清除</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
